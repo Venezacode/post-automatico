@@ -1,0 +1,41 @@
+# ============================================================
+#  CONFIGURAÇÃO DO SEU PERFIL — edite à vontade
+# ============================================================
+
+perfil:
+  nome: "Gabriel Venezaa"       # aparece no cabeçalho estilo tweet
+  arroba: "gabrielvenezaa"      # sem o @
+  verificado: true              # mostra o selo azul no estilo tweet
+  avatar: "assets/avatar.png"   # coloque sua foto aqui (quadrada). Se não existir, usa as iniciais.
+
+conteudo:
+  idioma: "português do Brasil"
+  nicho: "marketing, vendas, posicionamento e mindset de quem empreende e cria conteúdo"
+  tom: "direto, confiante, um pouco provocativo, sem enrolação e sem clichê motivacional barato"
+  # Temas que o gerador alterna entre si
+  pilares:
+    - "posicionamento e comunicação genérica vs. específica"
+    - "constância e criação de conteúdo"
+    - "vendas e medo de investir em marketing"
+    - "mindset, decisão, ação e oportunidades"
+    - "gestão, contratação e liderança"
+    - "verdades incômodas sobre empreender"
+  # Palavras/ideias a evitar
+  evitar:
+    - "frases genéricas de coach"
+    - "hashtags dentro da imagem"
+  cta_legenda: "Siga para mais conteúdo sobre marketing e negócios."
+  hashtags: ["marketing", "empreendedorismo", "vendas", "marketingdigital", "mindset"]
+
+visual:
+  # Rotação dos estilos: claro | escuro | tweet_claro | tweet_escuro
+  estilos: ["claro", "escuro", "tweet_claro", "tweet_escuro"]
+  cor_destaque: "#E63B2E"   # vermelho da frase-chave
+  largura: 1080
+  altura: 1350              # 4:5, o melhor formato do feed
+
+agenda:
+  # Dias de postagem (o horário é definido no .github/workflows/post.yml)
+  dias: ["seg", "qua", "sex"]
+
+modelo_ia: "claude-sonnet-5-5"

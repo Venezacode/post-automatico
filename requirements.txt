@@ -1,0 +1,4 @@
+pillow
+anthropic
+requests
+pyyaml

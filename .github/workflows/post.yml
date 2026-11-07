@@ -1,0 +1,53 @@
+name: Postar no Instagram
+
+on:
+  schedule:
+    # Seg, Qua e Sex às 12:00 UTC = 09:00 no horário de Brasília
+    - cron: "0 12 * * 1,3,5"
+  workflow_dispatch: {}   # botão "Run workflow" para testar na hora
+
+permissions:
+  contents: write
+
+jobs:
+  postar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar fonte e dependências
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y fonts-inter
+          pip install -r requirements.txt
+
+      - name: Criar o post do dia
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python main.py criar 1
+
+      - name: Salvar imagem no repositório
+        run: |
+          git config user.name "post-bot"
+          git config user.email "post-bot@users.noreply.github.com"
+          git add posts historico.json
+          git commit -m "novo post" || true
+          git push
+
+      - name: Publicar no Instagram
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IMAGE_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}
+        run: |
+          sleep 20
+          python main.py publicar
+
+      - name: Registrar status
+        run: |
+          git add historico.json
+          git commit -m "post publicado" || true
+          git push

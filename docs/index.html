@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de Posts</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --card:#ffffff; --text:#161616; --muted:#6b6b6b; --line:#e4e2dc;
+    --accent:#e63b2e; --accent-text:#ffffff; --ok:#1f8a4c;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0c0c0d; --card:#161617; --text:#f2f2f2; --muted:#9a9a9f; --line:#2a2a2d; --ok:#4cc380; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:28px 16px 8px;max-width:760px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 4px;letter-spacing:-.02em}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  main{max-width:760px;margin:0 auto;padding:8px 16px 48px;display:grid;gap:16px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:20px 0 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr}
+  @media (min-width:640px){ .card{grid-template-columns:240px 1fr} }
+  .card img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover;background:var(--line)}
+  .body{padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .when{font-weight:600}
+  .tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-left:8px;font-weight:500}
+  .tag.ok{color:var(--ok);border-color:var(--ok)}
+  .cap{white-space:pre-wrap;font-size:14px;color:var(--muted);max-height:9.5em;overflow:auto;margin:0;overflow-wrap:anywhere}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+  button{font:inherit;font-weight:600;font-size:14px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;min-height:44px}
+  button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+  button:active{transform:scale(.98)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+  .toast.on{opacity:1}
+  .empty{padding:40px 16px;text-align:center;color:var(--muted)}
+  .past .card{opacity:.6}
+</style>
+</head>
+<body>
+<header>
+  <h1>Painel de Posts</h1>
+  <p>Copie a legenda, baixe a imagem e agende no Buffer. Atualiza sozinho a cada novo lote.</p>
+</header>
+<main id="lista"><div class="empty">Carregando…</div></main>
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = "https://raw.githubusercontent.com/Venezacode/post-automatico/main/";
+const el = document.getElementById("lista");
+const toast = document.getElementById("toast");
+
+function aviso(msg){ toast.textContent = msg; toast.classList.add("on"); setTimeout(()=>toast.classList.remove("on"), 1800); }
+
+function quando(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"2-digit",timeZone:"America/Sao_Paulo"})
+       + " às " + d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",timeZone:"America/Sao_Paulo"});
+}
+
+async function copiar(texto){
+  try{ await navigator.clipboard.writeText(texto); aviso("Legenda copiada"); }
+  catch(e){
+    const t=document.createElement("textarea"); t.value=texto; document.body.appendChild(t); t.select();
+    document.execCommand("copy"); t.remove(); aviso("Legenda copiada");
+  }
+}
+
+async function blobDaImagem(url){ const r = await fetch(url); return await r.blob(); }
+
+async function baixar(url, nome){
+  const b = await blobDaImagem(url);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  aviso("Imagem baixada");
+}
+
+async function compartilhar(url, nome, legenda){
+  try{
+    const b = await blobDaImagem(url);
+    const f = new File([b], nome, {type:"image/png"});
+    if(navigator.canShare && navigator.canShare({files:[f]})){
+      await navigator.share({files:[f], text: legenda});
+    } else { aviso("Compartilhar não é suportado aqui. Use Copiar e Baixar."); }
+  }catch(e){ if(e.name!=="AbortError") aviso("Não consegui compartilhar"); }
+}
+
+function card(p){
+  const url = BASE + p.arquivo;
+  const nome = p.arquivo.split("/").pop();
+  const c = document.createElement("article"); c.className = "card";
+  const img = document.createElement("img"); img.src = url; img.alt = "Post " + nome; img.loading = "lazy";
+  const body = document.createElement("div"); body.className = "body";
+  const w = document.createElement("div"); w.className = "when";
+  w.textContent = p.agendado ? quando(p.agendado) : "Sem horário";
+  const tag = document.createElement("span"); tag.className = "tag" + (p.status==="publicado"?" ok":"");
+  tag.textContent = p.status==="publicado" ? "publicado" : "para agendar";
+  w.appendChild(tag);
+  const cap = document.createElement("pre"); cap.className = "cap"; cap.textContent = p.legenda;
+  const ac = document.createElement("div"); ac.className = "actions";
+  const b1 = document.createElement("button"); b1.className="primary"; b1.textContent="Copiar legenda"; b1.onclick=()=>copiar(p.legenda);
+  const b2 = document.createElement("button"); b2.textContent="Baixar imagem"; b2.onclick=()=>baixar(url,nome);
+  ac.append(b1,b2);
+  if(navigator.canShare){ const b3=document.createElement("button"); b3.textContent="Compartilhar"; b3.onclick=()=>compartilhar(url,nome,p.legenda); ac.append(b3); }
+  body.append(w,cap,ac); c.append(img,body); return c;
+}
+
+function secao(titulo, itens, classe){
+  const s = document.createElement("section"); if(classe) s.className = classe;
+  const h = document.createElement("h2"); h.textContent = titulo; s.appendChild(h);
+  const g = document.createElement("div"); g.style.display="grid"; g.style.gap="16px"; g.style.marginTop="12px";
+  itens.forEach(p=>g.appendChild(card(p))); s.appendChild(g); return s;
+}
+
+(async()=>{
+  try{
+    const r = await fetch(BASE + "historico.json?t=" + Date.now());
+    if(!r.ok) throw new Error(r.status);
+    const dados = await r.json();
+    const agora = Date.now();
+    const ord = dados.filter(p=>p.arquivo).sort((a,b)=>new Date(a.agendado||a.criado)-new Date(b.agendado||b.criado));
+    const futuros = ord.filter(p=>!p.agendado || new Date(p.agendado).getTime() >= agora - 6*3600e3);
+    const passados = ord.filter(p=>!futuros.includes(p)).reverse();
+    el.textContent = "";
+    if(!ord.length){ el.innerHTML = '<div class="empty">Nenhum post ainda. Rode o workflow "Gerar lote da semana".</div>'; return; }
+    if(futuros.length) el.appendChild(secao("Próximos posts", futuros));
+    if(passados.length) el.appendChild(secao("Anteriores", passados, "past"));
+  }catch(e){
+    el.innerHTML = '<div class="empty">Não consegui carregar os posts. Tente atualizar a página.</div>';
+  }
+})();
+</script>
+</body>
+</html>

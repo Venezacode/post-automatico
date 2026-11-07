@@ -43,4 +43,4 @@ repositorio_url_raw: "https://raw.githubusercontent.com/Venezacode/post-automati
 
 ia:
   provedor: "gemini"          # "gemini" (camada gratuita, GEMINI_API_KEY) ou "claude" (pago, ANTHROPIC_API_KEY)
-  modelo: "gemini-2.5-flash"  # se o Google trocar o nome, atualize aqui
+  modelo: "gemini-3.8-flash"  # se o Google trocar o nome, atualize aqui

@@ -59,7 +59,7 @@ NÃO repita nem parafraseie nenhuma destas frases já publicadas:
 
     ia = cfg.get("ia", {})
     provedor = ia.get("provedor", "gemini")
-    modelo = ia.get("modelo", "gemini-2.5-flash" if provedor == "gemini" else "claude-sonnet-5-5")
+    modelo = ia.get("modelo", "gemini-3.8-flash" if provedor == "gemini" else "claude-sonnet-5-5")
     if provedor == "gemini":
         bruto = _gemini(modelo, pedido)
     else:

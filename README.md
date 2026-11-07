@@ -38,3 +38,8 @@ No Later/Metricool: importe o CSV ou envie as PNGs de `posts/` e cole as legenda
 Há um app criado no Meta (ID 1873467220528830), mas o Meta bloqueou a conexão do portfólio por verificação de segurança.
 Quando liberar: conectar o portfólio, vincular o Instagram, gerar o token e cadastrar `IG_ACCESS_TOKEN` e `IG_USER_ID`
 nos segredos. Depois, rode o workflow `Postar no Instagram` (`main.py criar` + `main.py publicar`).
+
+## Painel de posts (celular ou computador)
+
+https://venezacode.github.io/post-automatico/ — lista os posts do lote com **Copiar legenda**, **Baixar imagem** e **Compartilhar** (no celular).
+Atualiza sozinho quando o workflow semanal gera novos posts.

@@ -14,7 +14,9 @@ Características dos posts de referência:
 - Frase curta e afirmativa, de 8 a 25 palavras no total.
 - Formatos que funcionam: "Regra de marketing:" + lista curta de verbos (Conteúdo atrai. Repetição faz lembrar.); contraste "isso vs. aquilo"; verdade incômoda; inversão de crença comum; frase-sentença ("Estar pronto não é um sentimento, é uma decisão.").
 - Linguagem natural, falada, sem jargão vazio. Concreta, nunca vaga.
-- Um trecho curto (2 a 6 palavras) é a "frase-chave" e vai marcado com asteriscos: *assim*. Exatamente um trecho por post.
+- Um trecho curto (2 a 6 palavras) é a "frase-chave" e vai marcado com asteriscos: *assim*. Exatamente um trecho por post, de preferência o final da frase.
+- Opcionalmente, um segundo trecho curto de ênfase marcado com underscores: _assim_ (use em no máximo metade dos posts).
+- Varie o formato entre os posts: frase curta de impacto (até 12 palavras), frase em duas partes (setup + virada), lista "Regra de X:" com 4 a 6 linhas curtas terminadas em ponto (primeira linha termina com dois pontos), e post em tom de tweet ("Porrada de marketing:" + 2 parágrafos curtos).
 - Use \\n para quebrar linha só quando a estrutura pedir (listas, "Título:" + corpo).
 - Não use emojis, hashtags nem aspas dentro do card.
 
@@ -102,6 +104,8 @@ NÃO repita nem parafraseie nenhuma destas frases já publicadas:
         texto = p["texto"].replace("\\n", "\n").strip()
         if texto.count("*") != 2:  # garante um único destaque
             texto = texto.replace("*", "")
+        if texto.count("_") != 2:
+            texto = texto.replace("_", "")
         legenda = p["legenda"].replace("\\n", "\n").strip()
         saida.append({"texto": texto, "legenda": f"{legenda}\n\n{tags}".strip()})
     return saida

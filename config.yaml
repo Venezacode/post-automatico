@@ -28,9 +28,9 @@ conteudo:
   hashtags: ["marketing", "empreendedorismo", "vendas", "marketingdigital", "mindset"]
 
 visual:
-  # Rotação dos estilos: claro | escuro | tweet_claro | tweet_escuro
-  estilos: ["claro", "escuro", "tweet_claro", "tweet_escuro"]
-  cor_destaque: "#E63B2E"   # vermelho da frase-chave
+  # Rotação dos estilos: papel | branco_vermelho | caixa_alta | escuro_leve | semibold_cinza | regra | tweet_claro | tweet_escuro
+  estilos: ["papel", "branco_vermelho", "caixa_alta", "escuro_leve", "tweet_claro", "semibold_cinza", "regra", "tweet_escuro"]
+  cor_destaque: "#E5311F"   # vermelho da frase-chave
   largura: 1080
   altura: 1350              # 4:5, o melhor formato do feed
 

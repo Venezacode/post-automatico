@@ -20,9 +20,13 @@ ROOT = Path(__file__).parent
 HIST = ROOT / "historico.json"
 
 DEMO = [
-    ("claro", "Quem tem medo\nde investir em\nmarketing continuará pagando\no *preço de não vender.*"),
-    ("escuro", "REGRA DE MARKETING:\n\nConteúdo atrai.\nRepetição faz lembrar.\nBastidor aproxima.\nOpinião posiciona.\nHistória conecta.\n*Postar todo dia vende.*"),
-    ("tweet_claro", "Porrada de marketing:\n\nSeu produto pode ser o melhor do mercado.\n\nSe a comunicação for *genérica,* ele vai competir como se fosse igual a todos os outros."),
+    ("papel", "Quem tem medo\nde investir em\nmarketing continuará pagando\no preço de não vender."),
+    ("branco_vermelho", "Toda empresa grande já foi\n*uma ideia que alguém achou ridícula.*"),
+    ("caixa_alta", "Seu cérebro acredita na história que você repete todos os dias. Então escolha uma história poderosa."),
+    ("escuro_leve", "Você nunca vai\n_se sentir pronto,_\nporque estar pronto\nnão é um sentimento,\n*é uma decisão.*"),
+    ("semibold_cinza", "O sucesso na vida também é medido pela quantidade de conversas difíceis que você está disposto a ter."),
+    ("regra", "REGRA DE MARKETING:\n\nConteúdo atrai.\nRepetição faz lembrar.\nBastidor aproxima.\nOpinião posiciona.\nHistória conecta.\nPostar todo dia vende."),
+    ("tweet_claro", "Porrada de marketing:\n\nSeu produto pode ser o melhor do mercado.\n\nSe a comunicação for genérica, ele vai competir como se fosse igual a todos os outros."),
     ("tweet_escuro", "Oportunidades não surgem do nada. É *você quem as cria.*"),
 ]
 

@@ -1,9 +1,7 @@
 name: Postar no Instagram
 
 on:
-  schedule:
-    # Seg, Qua e Sex às 12:00 UTC = 09:00 no horário de Brasília
-    - cron: "0 12 * * 1,3,5"
+  # Publicação direta pela API do Instagram: só manual por enquanto (ver README)
   workflow_dispatch: {}   # botão "Run workflow" para testar na hora
 
 permissions:

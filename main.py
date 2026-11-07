@@ -2,7 +2,8 @@
   python main.py demo             # renderiza frases de exemplo (sem IA, sem Instagram)
   python main.py preview [N]      # gera N posts com IA em preview/ (não salva histórico)
   python main.py criar [N]        # gera N posts, salva em posts/ e marca como pendentes
-  python main.py publicar         # publica os pendentes no Instagram
+  python main.py lote [N]         # gera N posts + agenda.csv (Buffer/Later/Metricool) nos próximos seg/qua/sex
+  python main.py publicar         # publica os pendentes no Instagram (API oficial, opcional)
   python main.py renovar-token    # imprime um novo token de 60 dias
 """
 from __future__ import annotations
@@ -73,6 +74,60 @@ def cmd_criar(cfg, n):
     salvar_hist(hist)
 
 
+DIAS = {"seg": 0, "ter": 1, "qua": 2, "qui": 3, "sex": 4, "sab": 5, "dom": 6}
+
+
+def proximos_horarios(cfg: dict, n: int, apos=None) -> list:
+    """Próximos N horários de postagem (dias e hora definidos em config.yaml -> agenda)."""
+    from datetime import timedelta
+    ag = cfg["agenda"]
+    dias = sorted(DIAS[d] for d in ag["dias"])
+    hh, mm = map(int, ag.get("hora", "09:00").split(":"))
+    ref = apos or datetime.now()
+    d = ref.replace(hour=hh, minute=mm, second=0, microsecond=0)
+    saida = []
+    while len(saida) < n:
+        if d > ref and d.weekday() in dias:
+            saida.append(d)
+        d += timedelta(days=1)
+    return saida
+
+
+def cmd_lote(cfg, n):
+    import csv
+    from render import renderizar
+    hist = carregar_hist()
+    if os.environ.get("PA_DEMO"):  # teste sem IA
+        posts = [{"texto": t, "legenda": f"Legenda de teste {i}\n\n#marketing"} for i, (_, t) in enumerate(DEMO[:n], 1)]
+    else:
+        from writer import gerar
+        posts = gerar(cfg, n, [h["texto"] for h in hist])
+    base = os.environ.get("IMAGE_BASE_URL", cfg.get("repositorio_url_raw", "")).rstrip("/")
+    ultimo = None
+    pend = [datetime.fromisoformat(h["agendado"]) for h in hist if h.get("agendado")]
+    if pend:
+        ultimo = max(pend)
+    horarios = proximos_horarios(cfg, len(posts), ultimo if ultimo and ultimo > datetime.now() else None)
+    linhas = []
+    for p, quando in zip(posts, horarios):
+        estilo = proximo_estilo(cfg, len(hist))
+        nome = f"{quando:%Y-%m-%d}-{len(hist)+1}.png"
+        renderizar(p["texto"], estilo, cfg, str(ROOT / "posts" / nome))
+        hist.append({"texto": p["texto"], "legenda": p["legenda"], "estilo": estilo, "arquivo": f"posts/{nome}",
+                     "status": "agendado-externo", "agendado": quando.isoformat(), "criado": datetime.now().isoformat()})
+        linhas.append([p["legenda"], f"{base}/posts/{nome}", "", f"{quando:%Y-%m-%d %H:%M}"])
+        print(f"{quando:%a %d/%m %H:%M}  {nome}")
+    arq = ROOT / "agenda.csv"
+    novo = not arq.exists()
+    with arq.open("a", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        if novo:
+            w.writerow(["Text", "Image URL", "Tags", "Posting Time"])
+        w.writerows(linhas)
+    salvar_hist(hist)
+    print("agenda:", arq)
+
+
 def cmd_publicar(cfg):
     from publisher import publicar
     base = os.environ.get("IMAGE_BASE_URL", "").rstrip("/")
@@ -98,6 +153,7 @@ def main():
     if cmd == "demo": cmd_demo(cfg)
     elif cmd == "preview": cmd_preview(cfg, n)
     elif cmd == "criar": cmd_criar(cfg, n)
+    elif cmd == "lote": cmd_lote(cfg, n)
     elif cmd == "publicar": cmd_publicar(cfg)
     elif cmd == "renovar-token":
         from publisher import renovar_token

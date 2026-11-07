@@ -35,7 +35,10 @@ visual:
   altura: 1350              # 4:5, o melhor formato do feed
 
 agenda:
-  # Dias de postagem (o horário é definido no .github/workflows/post.yml)
   dias: ["seg", "qua", "sex"]
+  hora: "09:00"   # horário local (Brasília)
+
+# URL pública das imagens (repositório público do GitHub); usada no agenda.csv
+repositorio_url_raw: "https://raw.githubusercontent.com/Venezacode/post-automatico/main"
 
 modelo_ia: "claude-sonnet-5-5"

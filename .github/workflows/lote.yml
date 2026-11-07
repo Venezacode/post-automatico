@@ -1,0 +1,43 @@
+name: Gerar lote da semana
+
+on:
+  schedule:
+    # Todo domingo às 12:00 UTC (09:00 Brasília): gera os 3 posts da semana
+    - cron: "0 12 * * 0"
+  workflow_dispatch:
+    inputs:
+      quantidade:
+        description: "Quantos posts gerar"
+        default: "3"
+
+permissions:
+  contents: write
+
+jobs:
+  lote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar fonte e dependências
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y fonts-inter
+          pip install -r requirements.txt
+
+      - name: Gerar posts, legendas e agenda.csv
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TZ: America/Sao_Paulo
+        run: python main.py lote ${{ github.event.inputs.quantidade || '3' }}
+
+      - name: Salvar no repositório
+        run: |
+          git config user.name "post-bot"
+          git config user.email "post-bot@users.noreply.github.com"
+          git add posts historico.json agenda.csv
+          git commit -m "lote da semana" || true
+          git push

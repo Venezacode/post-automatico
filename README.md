@@ -19,18 +19,22 @@ export ANTHROPIC_API_KEY="sua-chave"
 .venv/bin/python main.py preview 3     # gera 3 posts + legendas em preview/
 ```
 
-## 2. Instagram (API oficial)
+## 2. Agendar sem API (Plano B — Buffer, Later ou Metricool)
 
-1. A conta precisa ser **Profissional** (Criador ou Empresa).
-2. Em developers.facebook.com crie um app → tipo **Business** → adicione o produto **Instagram** → "API setup with Instagram login".
-3. Adicione sua conta como testador/usuário do app e gere o **token de acesso** (permissão `instagram_business_content_publish`) e anote o **Instagram User ID**.
-4. Token dura 60 dias. Renove a cada ~30 dias: `IG_ACCESS_TOKEN=... python main.py renovar-token` e atualize o segredo no GitHub.
+O comando `lote` gera as imagens, as legendas e um `agenda.csv` com os próximos seg/qua/sex às 09h:
 
-## 3. Automação (GitHub Actions, grátis, não precisa do Mac ligado)
+```bash
+.venv/bin/python main.py lote 3
+```
 
-1. Crie um repositório **público** no GitHub e suba esta pasta (o Instagram precisa baixar a imagem por URL pública).
-2. Em Settings → Secrets → Actions, crie: `ANTHROPIC_API_KEY`, `IG_ACCESS_TOKEN`, `IG_USER_ID`.
-3. Aba Actions → "Postar no Instagram" → **Run workflow** para testar na hora.
-4. Depois disso roda sozinho seg/qua/sex. Para mudar horário ou dias, edite o `cron` em `.github/workflows/post.yml`.
+No Buffer: Publishing → Bulk upload / Import CSV → envie `agenda.csv`
+(colunas: Text, Image URL, Tags, Posting Time). As imagens são baixadas do GitHub público.
+No Later/Metricool: importe o CSV ou envie as PNGs de `posts/` e cole as legendas.
 
-Cada post fica registrado em `historico.json` (usado também para a IA não repetir frases).
+**Automático na nuvem:** o workflow `Gerar lote da semana` roda todo domingo, gera os 3 posts da próxima semana e atualiza `agenda.csv` no repositório. Segredo necessário: `ANTHROPIC_API_KEY`.
+
+## 3. Publicação direta pela API do Instagram (opcional, quando o Meta liberar)
+
+Há um app criado no Meta (ID 1873467220528830), mas o Meta bloqueou a conexão do portfólio por verificação de segurança.
+Quando liberar: conectar o portfólio, vincular o Instagram, gerar o token e cadastrar `IG_ACCESS_TOKEN` e `IG_USER_ID`
+nos segredos. Depois, rode o workflow `Postar no Instagram` (`main.py criar` + `main.py publicar`).

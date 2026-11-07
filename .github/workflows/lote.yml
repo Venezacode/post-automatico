@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   lote:
@@ -42,3 +43,23 @@ jobs:
           git add posts historico.json agenda.csv
           git commit -m "lote da semana" || true
           git push
+
+      - name: Avisar você para revisar (notificação no celular e email)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          PAINEL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          gh issue create \
+            --title "Revisar posts da semana" \
+            --assignee "${{ github.repository_owner }}" \
+            --body "Os posts da semana estão prontos para revisão: $PAINEL
+
+          1. Abra o painel, confira imagem e legenda.
+          2. Quer mudar algo? Peça ao Claude (sessão na nuvem neste repositório): \"troque o texto do post 2 por ...\".
+          3. Copie a legenda, baixe a imagem e agende no Buffer.
+
+          Feche esta issue quando terminar."
+          if [ -n "$NTFY_TOPIC" ]; then
+            curl -s -H "Title: Posts da semana prontos" -H "Click: $PAINEL" -d "Toque para revisar e agendar." "https://ntfy.sh/$NTFY_TOPIC" >/dev/null
+          fi

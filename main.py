@@ -43,9 +43,16 @@ def salvar_hist(h: list) -> None:
     HIST.write_text(json.dumps(h, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def proximo_estilo(cfg: dict, n_existentes: int) -> str:
+def proximo_estilo(cfg: dict, n_existentes: int, texto: str = "") -> str:
+    from render import estilo_valido
     est = cfg["visual"]["estilos"]
-    return est[n_existentes % len(est)]
+    linhas = [l for l in texto.strip().split("\n") if l.strip()]
+    if len(linhas) >= 3 and linhas[0].rstrip("* _").endswith(":") and "regra" in est:
+        return "regra"  # listas "Regra de X:" sempre no estilo de lista
+    e = est[n_existentes % len(est)]
+    if e == "regra":  # sem lista, não usa o estilo de lista
+        e = est[(n_existentes + 1) % len(est)]
+    return estilo_valido(e, texto)
 
 
 def cmd_demo(cfg):
@@ -59,7 +66,7 @@ def cmd_preview(cfg, n):
     from writer import gerar
     hist = carregar_hist()
     for i, p in enumerate(gerar(cfg, n, [h["texto"] for h in hist]), 1):
-        estilo = proximo_estilo(cfg, len(hist) + i - 1)
+        estilo = proximo_estilo(cfg, len(hist) + i - 1, p["texto"])
         arq = renderizar(p["texto"], estilo, cfg, str(ROOT / "preview" / f"preview-{i}-{estilo}.png"))
         print(f"→ {arq}\n{p['texto']}\n---\n{p['legenda']}\n")
 
@@ -69,7 +76,7 @@ def cmd_criar(cfg, n):
     from writer import gerar
     hist = carregar_hist()
     for p in gerar(cfg, n, [h["texto"] for h in hist]):
-        estilo = proximo_estilo(cfg, len(hist))
+        estilo = proximo_estilo(cfg, len(hist), p["texto"])
         nome = f"{datetime.now():%Y-%m-%d-%H%M%S}-{len(hist)+1}.png"
         renderizar(p["texto"], estilo, cfg, str(ROOT / "posts" / nome))
         hist.append({"texto": p["texto"], "legenda": p["legenda"], "estilo": estilo,
@@ -114,7 +121,7 @@ def cmd_lote(cfg, n):
     horarios = proximos_horarios(cfg, len(posts), ultimo if ultimo and ultimo > datetime.now() else None)
     linhas = []
     for p, quando in zip(posts, horarios):
-        estilo = proximo_estilo(cfg, len(hist))
+        estilo = proximo_estilo(cfg, len(hist), p["texto"])
         nome = f"{quando:%Y-%m-%d}-{len(hist)+1}.png"
         renderizar(p["texto"], estilo, cfg, str(ROOT / "posts" / nome))
         hist.append({"texto": p["texto"], "legenda": p["legenda"], "estilo": estilo, "arquivo": f"posts/{nome}",

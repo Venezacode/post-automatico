@@ -80,12 +80,23 @@ def parse(texto: str) -> List[List[Palavra]]:
     destaque = False
     for linha in texto.strip().split("\n"):
         palavras: List[Palavra] = []
+        colar = False  # próximo pedaço começa colado no anterior (sem espaço)
         for pedaco in re.split(r"(\*)", linha):
             if pedaco == "*":
                 destaque = not destaque
-            else:
-                for w in pedaco.split():
-                    palavras.append((w, destaque))
+                continue
+            if not pedaco:
+                continue
+            tokens = pedaco.split()
+            if not tokens:
+                colar = False
+                continue
+            if colar and palavras and not pedaco[0].isspace():
+                palavras[-1] = (palavras[-1][0] + tokens[0], palavras[-1][1])  # pontuação cola na palavra anterior
+                tokens = tokens[1:]
+            for w in tokens:
+                palavras.append((w, destaque))
+            colar = not pedaco[-1].isspace()
         paragrafos.append(palavras)
     return paragrafos
 

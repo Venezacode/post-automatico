@@ -27,18 +27,34 @@ def _gemini(modelo: str, pedido: str) -> str:
     """Google Gemini via REST (camada gratuita do AI Studio). Chave em GEMINI_API_KEY."""
     import os
     import requests
-    r = requests.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent",
-        headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
-        json={
-            "systemInstruction": {"parts": [{"text": SISTEMA}]},
-            "contents": [{"role": "user", "parts": [{"text": pedido}]}],
-            "generationConfig": {"responseMimeType": "application/json", "temperature": 1.0},
-        },
-        timeout=90,
-    )
+    import time
+    ultimo = ""
+    for tentativa in range(3):
+        try:
+            r = requests.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent",
+                headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
+                json={
+                    "systemInstruction": {"parts": [{"text": SISTEMA}]},
+                    "contents": [{"role": "user", "parts": [{"text": pedido}]}],
+                    "generationConfig": {"responseMimeType": "application/json", "temperature": 1.0},
+                },
+                timeout=240,
+            )
+        except requests.exceptions.RequestException as e:
+            ultimo = str(e)
+            time.sleep(10)
+            continue
+        if r.ok:
+            break
+        ultimo = f"{r.status_code}: {r.text[:400]}"
+        if r.status_code not in (429, 500, 502, 503, 504):
+            break
+        time.sleep(20)
+    else:
+        raise RuntimeError(f"Gemini falhou: {ultimo}")
     if not r.ok:
-        raise RuntimeError(f"Gemini falhou ({r.status_code}): {r.text[:400]}")
+        raise RuntimeError(f"Gemini falhou: {ultimo}")
     return r.json()["candidates"][0]["content"]["parts"][0]["text"]
 
 

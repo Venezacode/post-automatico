@@ -300,7 +300,7 @@ def renderizar(texto: str, estilo: str, cfg: dict, saida: str) -> str:
                font=fonte("mont", 500, 34 * S), fill=est["sec"])
     elif est["ass"] == "nome_centro":
         f = fonte("mont", 700, 38 * S)
-        n = perfil["nome"]
+        n = "@" + perfil["arroba"]
         d.text(((W * S - f.getlength(n)) / 2, H * S - 190 * S), n, font=f, fill=est["sec"])
 
     img = img.resize((W, H), Image.LANCZOS)

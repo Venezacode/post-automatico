@@ -23,6 +23,25 @@ A legenda tem: gancho forte na 1ª linha (diferente do card, aprofunda ou provoc
 Responda SOMENTE com JSON válido: uma lista de objetos {"texto": "...", "legenda": "..."}."""
 
 
+def _gemini(modelo: str, pedido: str) -> str:
+    """Google Gemini via REST (camada gratuita do AI Studio). Chave em GEMINI_API_KEY."""
+    import os
+    import requests
+    r = requests.post(
+        f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent",
+        headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
+        json={
+            "systemInstruction": {"parts": [{"text": SISTEMA}]},
+            "contents": [{"role": "user", "parts": [{"text": pedido}]}],
+            "generationConfig": {"responseMimeType": "application/json", "temperature": 1.0},
+        },
+        timeout=90,
+    )
+    if not r.ok:
+        raise RuntimeError(f"Gemini falhou ({r.status_code}): {r.text[:400]}")
+    return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+
+
 def gerar(cfg: dict, quantidade: int, historico: List[str]) -> List[dict]:
     c = cfg["conteudo"]
     pilares = random.sample(c["pilares"], k=min(quantidade, len(c["pilares"])))
@@ -38,14 +57,18 @@ CTA da legenda (pode adaptar): {c['cta_legenda']}
 NÃO repita nem parafraseie nenhuma destas frases já publicadas:
 {recentes}"""
 
-    client = anthropic.Anthropic()
-    resp = client.messages.create(
-        model=cfg.get("modelo_ia", "claude-sonnet-5-5"),
-        max_tokens=2000,
-        system=SISTEMA,
-        messages=[{"role": "user", "content": pedido}],
-    )
-    bruto = "".join(b.text for b in resp.content if b.type == "text")
+    ia = cfg.get("ia", {})
+    provedor = ia.get("provedor", "gemini")
+    modelo = ia.get("modelo", "gemini-2.5-flash" if provedor == "gemini" else "claude-sonnet-5-5")
+    if provedor == "gemini":
+        bruto = _gemini(modelo, pedido)
+    else:
+        client = anthropic.Anthropic()
+        resp = client.messages.create(
+            model=modelo, max_tokens=2000, system=SISTEMA,
+            messages=[{"role": "user", "content": pedido}],
+        )
+        bruto = "".join(b.text for b in resp.content if b.type == "text")
     m = re.search(r"\[.*\]", bruto, re.S)
     posts = json.loads(m.group(0) if m else bruto)
     tags = " ".join("#" + h.lstrip("#") for h in c.get("hashtags", []))

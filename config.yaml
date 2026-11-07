@@ -41,4 +41,6 @@ agenda:
 # URL pública das imagens (repositório público do GitHub); usada no agenda.csv
 repositorio_url_raw: "https://raw.githubusercontent.com/Venezacode/post-automatico/main"
 
-modelo_ia: "claude-sonnet-5-5"
+ia:
+  provedor: "gemini"          # "gemini" (camada gratuita, GEMINI_API_KEY) ou "claude" (pago, ANTHROPIC_API_KEY)
+  modelo: "gemini-2.5-flash"  # se o Google trocar o nome, atualize aqui

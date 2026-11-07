@@ -30,6 +30,7 @@ jobs:
 
       - name: Gerar posts, legendas e agenda.csv
         env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TZ: America/Sao_Paulo
         run: python main.py lote ${{ github.event.inputs.quantidade || '3' }}

@@ -12,10 +12,10 @@ cd post-automatico
 Edite `config.yaml`: nome, @, nicho, tom, pilares. Coloque sua foto em `assets/avatar.png`.
 Para usar uma fonte mais parecida com as referências (Montserrat/Inter Bold), salve em `fonts/bold.ttf` e `fonts/regular.ttf`.
 
-Frases com IA (precisa de chave em console.anthropic.com):
+Frases com IA. **Grátis:** chave do Gemini em aistudio.google.com/apikey (padrão no config.yaml). Pago, opcional: chave da Anthropic e `provedor: claude`.
 
 ```bash
-export ANTHROPIC_API_KEY="sua-chave"
+export GEMINI_API_KEY="sua-chave"
 .venv/bin/python main.py preview 3     # gera 3 posts + legendas em preview/
 ```
 
@@ -31,7 +31,7 @@ No Buffer: Publishing → Bulk upload / Import CSV → envie `agenda.csv`
 (colunas: Text, Image URL, Tags, Posting Time). As imagens são baixadas do GitHub público.
 No Later/Metricool: importe o CSV ou envie as PNGs de `posts/` e cole as legendas.
 
-**Automático na nuvem:** o workflow `Gerar lote da semana` roda todo domingo, gera os 3 posts da próxima semana e atualiza `agenda.csv` no repositório. Segredo necessário: `ANTHROPIC_API_KEY`.
+**Automático na nuvem:** o workflow `Gerar lote da semana` roda todo domingo, gera os 3 posts da próxima semana e atualiza `agenda.csv` no repositório. Segredo necessário: `GEMINI_API_KEY` (ou `ANTHROPIC_API_KEY` se usar Claude).
 
 ## 3. Publicação direta pela API do Instagram (opcional, quando o Meta liberar)
 

@@ -29,7 +29,7 @@ def _gemini(modelo: str, pedido: str) -> str:
     import requests
     import time
     ultimo = ""
-    for tentativa in range(3):
+    for tentativa in range(2):
         try:
             r = requests.post(
                 f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent",
@@ -39,7 +39,7 @@ def _gemini(modelo: str, pedido: str) -> str:
                     "contents": [{"role": "user", "parts": [{"text": pedido}]}],
                     "generationConfig": {"responseMimeType": "application/json", "temperature": 1.0},
                 },
-                timeout=240,
+                timeout=120,
             )
         except requests.exceptions.RequestException as e:
             ultimo = str(e)
@@ -75,9 +75,18 @@ NÃO repita nem parafraseie nenhuma destas frases já publicadas:
 
     ia = cfg.get("ia", {})
     provedor = ia.get("provedor", "gemini")
-    modelo = ia.get("modelo", "gemini-3.8-flash" if provedor == "gemini" else "claude-sonnet-5-5")
+    modelo = ia.get("modelo", "claude-sonnet-5-5")
     if provedor == "gemini":
-        bruto = _gemini(modelo, pedido)
+        bruto, erros = None, []
+        for m in ia.get("modelos", ["gemini-flash-latest"]):
+            try:
+                bruto = _gemini(m, pedido)
+                break
+            except Exception as e:
+                erros.append(f"{m}: {str(e)[:160]}")
+                print("modelo falhou, tentando o próximo:", erros[-1])
+        if bruto is None:
+            raise RuntimeError("Todos os modelos Gemini falharam: " + " | ".join(erros))
     else:
         client = anthropic.Anthropic()
         resp = client.messages.create(

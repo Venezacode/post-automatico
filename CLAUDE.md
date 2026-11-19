@@ -1,6 +1,6 @@
 # Contexto do projeto (leia primeiro)
 
-Ferramenta de **posts de texto para Instagram** (cards tipográficos 4:5, estilo de criadores de marketing/negócios do Brasil) do perfil **@gabrielvenezaa** (Gabriel). Meta: **3 posts por semana (seg, qua, sex, 09:00 Brasília)**, gerados na nuvem, com **notificação para o Gabriel revisar/editar antes de publicar**. Funciona de qualquer dispositivo; nada depende do Mac dele.
+Ferramenta de **posts de texto para Instagram** (cards tipográficos 4:5) com **citações de filosofia, estoicismo, introspecção, estratégia e história** (Marco Aurélio, Sêneca, Epicteto, Dostoiévski, Nietzsche, Sun Tzu etc.), sempre com **autor** no card (“frase” + “— Autor”) do perfil **@gabrielvenezaa** (Gabriel). Meta: **3 posts por semana (seg, qua, sex, 09:00 Brasília)**, gerados na nuvem, com **notificação para o Gabriel revisar/editar antes de publicar**. Funciona de qualquer dispositivo; nada depende do Mac dele.
 
 Este repositório é **público** (precisa ser, para o Instagram/Buffer baixarem as imagens por URL). **Nunca coloque chaves, tokens ou dados pessoais aqui.** Segredos ficam em GitHub → Settings → Secrets → Actions.
 
@@ -9,6 +9,9 @@ Este repositório é **público** (precisa ser, para o Instagram/Buffer baixarem
 - Design: **copiar as referências** (ver "Design"). Os estilos tipo **perfil/tweet (foto + nome + selo + @) ele aprovou: não mudar**.
 - Sempre mostrar **@gabrielvenezaa** no rodapé dos cards (nunca só o nome). Nos estilos tweet o cabeçalho com nome + @ é o esperado.
 - Ele quer ser **notificado** para revisar e editar antes de publicar.
+
+## Regra de ouro: citações verificáveis
+Frases atribuídas a figuras históricas são muitas vezes apócrifas (ex.: a de Alexandre, o Grande, "não conquistei a metade do mundo…"; várias de Dostoiévski/Sun Tzu). A IA é instruída a só usar citações de autoria estabelecida e a preencher `obra` e `confianca` (alta/media/baixa) em cada post; isso é salvo em `historico.json` e aparece no painel. **O IA não consegue verificar fontes: sempre conferir a citação antes de postar**, principalmente as com confiança diferente de "alta". Na dúvida, descartar.
 
 ## Como funciona
 ```

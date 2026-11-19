@@ -10,22 +10,25 @@ perfil:
 
 conteudo:
   idioma: "português do Brasil"
-  nicho: "marketing, vendas, posicionamento e mindset de quem empreende e cria conteúdo"
-  tom: "direto, confiante, um pouco provocativo, sem enrolação e sem clichê motivacional barato"
+  nicho: "frases de filosofia, estoicismo, introspecção, estratégia e história (Marco Aurélio, Sêneca, Epicteto, Dostoiévski, Nietzsche, Sun Tzu, Maquiavel, Musashi, grandes líderes e conquistadores)"
+  tom: "sóbrio, grave e introspectivo; poucas palavras, peso de sentença; sem autoajuda barata nem motivação clichê"
   # Temas que o gerador alterna entre si
   pilares:
-    - "posicionamento e comunicação genérica vs. específica"
-    - "constância e criação de conteúdo"
-    - "vendas e medo de investir em marketing"
-    - "mindset, decisão, ação e oportunidades"
-    - "gestão, contratação e liderança"
-    - "verdades incômodas sobre empreender"
+    - "estoicismo: controle, aceitação, obstáculo como caminho (Marco Aurélio, Sêneca, Epicteto)"
+    - "introspecção e sofrimento: responsabilidade sobre a própria mente (Dostoiévski, Kafka, Camus, Jung)"
+    - "estratégia e guerra: conhecer a si e ao adversário, paciência, preparo (Sun Tzu, Musashi, Clausewitz)"
+    - "poder, ambição e conquista: líderes e conquistadores da história (Alexandre, Júlio César, Napoleão, Maquiavel)"
+    - "tempo, morte e propósito (Sêneca, Nietzsche, Schopenhauer)"
+    - "disciplina, honra e virtude (Confúcio, Aristóteles, Lao Tsé)"
   # Palavras/ideias a evitar
   evitar:
     - "frases genéricas de coach"
     - "hashtags dentro da imagem"
-  cta_legenda: "Siga para mais conteúdo sobre marketing e negócios."
-  hashtags: ["marketing", "empreendedorismo", "vendas", "marketingdigital", "mindset"]
+    - "citações inventadas ou de autoria duvidosa atribuídas a pessoas reais"
+  # false = só citações com autor real; true = permite algumas frases autorais (autor vazio)
+  permitir_frases_autorais: false
+  cta_legenda: "Siga para mais frases e reflexões."
+  hashtags: ["filosofia", "estoicismo", "sabedoria", "mindset", "disciplina"]
 
 visual:
   # Rotação dos estilos: papel | branco_vermelho | caixa_alta | escuro_leve | semibold_cinza | regra | tweet_claro | tweet_escuro

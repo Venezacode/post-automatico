@@ -3,23 +3,23 @@
 # ============================================================
 
 perfil:
-  nome: "Gabriel Venezaa"       # aparece no cabeçalho estilo tweet
-  arroba: "gabrielvenezaa"      # sem o @
+  nome: "Nohan Ventura"       # aparece no cabeçalho estilo tweet
+  arroba: "eu.nohan"      # sem o @
   verificado: true              # mostra o selo azul no estilo tweet
   avatar: "assets/avatar.png"   # coloque sua foto aqui (quadrada). Se não existir, usa as iniciais.
 
 conteudo:
   idioma: "português do Brasil"
-  nicho: "frases de filosofia, estoicismo, introspecção, estratégia e história (Marco Aurélio, Sêneca, Epicteto, Dostoiévski, Nietzsche, Sun Tzu, Maquiavel, Musashi, grandes líderes e conquistadores)"
+  nicho: "frases de mentalidade, filosofia, estoicismo, introspecção, estratégia e história (Marco Aurélio, Sêneca, Epicteto, Dostoiévski, Nietzsche, Sun Tzu, Maquiavel, Musashi, grandes líderes e conquistadores)"
   tom: "sóbrio, grave e introspectivo; poucas palavras, peso de sentença; sem autoajuda barata nem motivação clichê"
   # Temas que o gerador alterna entre si
   pilares:
-    - "estoicismo: controle, aceitação, obstáculo como caminho (Marco Aurélio, Sêneca, Epicteto)"
-    - "introspecção e sofrimento: responsabilidade sobre a própria mente (Dostoiévski, Kafka, Camus, Jung)"
+    - "mentalidade e riqueza: persistência, desejo, fé em si (Napoleon Hill, Pense e Enriqueça)"
     - "estratégia e guerra: conhecer a si e ao adversário, paciência, preparo (Sun Tzu, Musashi, Clausewitz)"
-    - "poder, ambição e conquista: líderes e conquistadores da história (Alexandre, Júlio César, Napoleão, Maquiavel)"
-    - "tempo, morte e propósito (Sêneca, Nietzsche, Schopenhauer)"
-    - "disciplina, honra e virtude (Confúcio, Aristóteles, Lao Tsé)"
+    - "poder, ambição e conquista: líderes e conquistadores (Alexandre, Júlio César, Napoleão, Maquiavel)"
+    - "estoicismo: controle, aceitação, obstáculo como caminho (Marco Aurélio, Sêneca, Epicteto)"
+    - "introspecção e responsabilidade sobre a própria mente (Dostoiévski, Nietzsche, Jung)"
+    - "tempo, disciplina e propósito (Sêneca, Aristóteles, Confúcio)"
   # Palavras/ideias a evitar
   evitar:
     - "frases genéricas de coach"
@@ -28,7 +28,7 @@ conteudo:
   # false = só citações com autor real; true = permite algumas frases autorais (autor vazio)
   permitir_frases_autorais: false
   cta_legenda: "Siga para mais frases e reflexões."
-  hashtags: ["filosofia", "estoicismo", "sabedoria", "mindset", "disciplina"]
+  hashtags: ["mentalidade", "napoleonhill", "estrategia", "filosofia", "disciplina"]
 
 visual:
   # Rotação dos estilos: papel | branco_vermelho | caixa_alta | escuro_leve | semibold_cinza | regra | tweet_claro | tweet_escuro

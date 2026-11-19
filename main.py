@@ -18,6 +18,7 @@ import yaml
 
 ROOT = Path(__file__).parent
 HIST = ROOT / "historico.json"
+FILA = ROOT / "fila.json"
 
 DEMO = [  # (estilo, texto, autor) — citações clássicas de autoria estabelecida; revise a tradução antes de postar
     ("papel", "Não é que tenhamos pouco tempo,\nmas que *perdemos muito.*", "Sêneca"),
@@ -41,6 +42,19 @@ def carregar_hist() -> list:
 
 def salvar_hist(h: list) -> None:
     HIST.write_text(json.dumps(h, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def tirar_da_fila(cfg: dict, n: int, hist: list) -> list:
+    """Frases escritas pelo Claude (fila.json), sem repetir o que já está no histórico. Remove da fila as usadas."""
+    if not FILA.exists():
+        return []
+    fila = json.loads(FILA.read_text(encoding="utf-8"))
+    usados = {h["texto"] for h in hist}
+    fila = [f for f in fila if f["texto"] not in usados]
+    pegos, resto = fila[:n], fila[n:]
+    tags = " ".join("#" + h.lstrip("#") for h in cfg["conteudo"].get("hashtags", []))
+    FILA.write_text(json.dumps(resto, ensure_ascii=False, indent=2), encoding="utf-8")
+    return [{**f, "legenda": f"{f['legenda']}\n\n{cfg['conteudo']['cta_legenda']}\n\n{tags}".strip()} for f in pegos]
 
 
 def proximo_estilo(cfg: dict, n_existentes: int, texto: str = "") -> str:
@@ -112,8 +126,13 @@ def cmd_lote(cfg, n):
     if os.environ.get("PA_DEMO"):  # teste sem IA
         posts = [{"texto": t, "autor": a, "obra": "", "confianca": "alta", "legenda": f"Legenda de teste {i}\n\n#filosofia"} for i, (_, t, a) in enumerate(DEMO[:n], 1)]
     else:
-        from writer import gerar
-        posts = gerar(cfg, n, [h["texto"] for h in hist])
+        posts = tirar_da_fila(cfg, n, hist)
+        if len(posts) < n:  # fila acabou: completa com IA (se houver chave), senão avisa
+            try:
+                from writer import gerar
+                posts += gerar(cfg, n - len(posts), [h["texto"] for h in hist])
+            except Exception as e:
+                print(f"Fila vazia e IA indisponível ({str(e)[:120]}). Peça um novo lote de frases ao Claude.")
     base = os.environ.get("IMAGE_BASE_URL", cfg.get("repositorio_url_raw", "")).rstrip("/")
     ultimo = None
     pend = [datetime.fromisoformat(h["agendado"]) for h in hist if h.get("agendado")]

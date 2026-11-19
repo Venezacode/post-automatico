@@ -1,13 +1,13 @@
 # Contexto do projeto (leia primeiro)
 
-Ferramenta de **posts de texto para Instagram** (cards tipográficos 4:5) com **citações de filosofia, estoicismo, introspecção, estratégia e história** (Marco Aurélio, Sêneca, Epicteto, Dostoiévski, Nietzsche, Sun Tzu etc.), sempre com **autor** no card (“frase” + “— Autor”) do perfil **@gabrielvenezaa** (Gabriel). Meta: **3 posts por semana (seg, qua, sex, 09:00 Brasília)**, gerados na nuvem, com **notificação para o Gabriel revisar/editar antes de publicar**. Funciona de qualquer dispositivo; nada depende do Mac dele.
+Ferramenta de **posts de texto para Instagram** (cards tipográficos 4:5) com **citações de filosofia, estoicismo, introspecção, estratégia e história** (Marco Aurélio, Sêneca, Epicteto, Dostoiévski, Nietzsche, Sun Tzu etc.), sempre com **autor** no card (“frase” + “— Autor”) do perfil **@eu.nohan** (Nohan Ventura, selo verificado, foto em `assets/avatar.png` recortada do print do perfil). Meta: **3 posts por semana (seg, qua, sex, 09:00 Brasília)**, gerados na nuvem, com **notificação para o Gabriel revisar/editar antes de publicar**. Funciona de qualquer dispositivo; nada depende do Mac dele.
 
 Este repositório é **público** (precisa ser, para o Instagram/Buffer baixarem as imagens por URL). **Nunca coloque chaves, tokens ou dados pessoais aqui.** Segredos ficam em GitHub → Settings → Secrets → Actions.
 
 ## Preferências do Gabriel (respeitar)
 - Falar em **português do Brasil**, direto, sem enrolação. Ele pede "faça por mim" e só quer cuidar de logins/senhas.
 - Design: **copiar as referências** (ver "Design"). Os estilos tipo **perfil/tweet (foto + nome + selo + @) ele aprovou: não mudar**.
-- Sempre mostrar **@gabrielvenezaa** no rodapé dos cards (nunca só o nome). Nos estilos tweet o cabeçalho com nome + @ é o esperado.
+- Sempre mostrar **@eu.nohan** no rodapé dos cards (nunca só o nome). Nos estilos tweet o cabeçalho com nome + @ é o esperado.
 - Ele quer ser **notificado** para revisar e editar antes de publicar.
 
 ## Regra de ouro: citações verificáveis
@@ -22,6 +22,9 @@ domingo 09:00 BRT -> GitHub Actions (.github/workflows/lote.yml)
 ```
 - Painel: https://venezacode.github.io/post-automatico/ (lê `historico.json` do repositório; botões copiar legenda / baixar imagem / compartilhar).
 - Para mudar um post: editar o texto em `historico.json` e re-renderizar (ver Comandos) ou pedir ao Claude.
+
+## Frases (fila escrita pelo Claude)
+As frases vêm de `fila.json` (escritas pelo Claude em sessão, com `obra` e `confianca`). `main.py lote` consome a fila primeiro e só chama IA (Gemini/Claude via API) se a fila acabar e houver chave. Para reabastecer: peça "escreva mais N frases na fila" numa sessão do Claude. Referências do tema: Napoleon Hill, Sun Tzu, Alexandre, Júlio César, Maquiavel, estoicos. Frases virais de autoria duvidosa (ex.: Alexandre "não conquistei a metade do mundo…") ficam fora. Imagens de fundo por IA: **não** usadas (visual dos cards inalterado); a chave Gemini testada tem limite 0 para geração de imagem no plano grátis.
 
 ## Arquivos
 - `config.yaml` — perfil, nicho/tom/pilares, estilos, dias/hora, IA (`ia.provedor`: `gemini` padrão grátis ou `claude`; `ia.modelos` lista de reserva).

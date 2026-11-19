@@ -1,0 +1,79 @@
+[
+  {
+    "texto": "A suprema excelência consiste em *quebrar a resistência do inimigo sem lutar.*",
+    "autor": "Sun Tzu",
+    "obra": "A Arte da Guerra, cap. III",
+    "confianca": "alta",
+    "legenda": "A melhor vitória é a que não custa uma batalha.\n\nSun Tzu pensava em preparo, posição e informação antes da força."
+  },
+  {
+    "texto": "Se você conhece o inimigo e conhece a si mesmo, não precisa temer o *resultado de cem batalhas.*",
+    "autor": "Sun Tzu",
+    "obra": "A Arte da Guerra, cap. III",
+    "confianca": "alta",
+    "legenda": "Quase todo mundo estuda o adversário. Poucos estudam a si mesmos com a mesma honestidade.\n\nAmbos os conhecimentos pesam o mesmo."
+  },
+  {
+    "texto": "Toda guerra é baseada *no engano.*",
+    "autor": "Sun Tzu",
+    "obra": "A Arte da Guerra, cap. I",
+    "confianca": "alta",
+    "legenda": "Para Sun Tzu, parecer fraco quando se é forte e forte quando se é fraco faz parte da estratégia.\n\nSaber o que o outro vê é metade da vantagem."
+  },
+  {
+    "texto": "Se eu não fosse Alexandre, *gostaria de ser Diógenes.*",
+    "autor": "Alexandre, o Grande",
+    "obra": "Plutarco, Vida de Alexandre",
+    "confianca": "media",
+    "legenda": "Registrada por Plutarco, a frase mostra o maior conquistador do mundo admirando um homem que não queria nada.\n\nO poder também reconhece quem é livre dele."
+  },
+  {
+    "texto": "Vim, vi, *venci.*",
+    "autor": "Júlio César",
+    "obra": "Plutarco e Suetônio",
+    "confianca": "alta",
+    "legenda": "Três palavras para anunciar a vitória em Zela, no ano 47 a.C.\n\nA brevidade era a mensagem: velocidade e decisão."
+  },
+  {
+    "texto": "É muito mais seguro ser temido do que amado, *quando é preciso escolher.*",
+    "autor": "Nicolau Maquiavel",
+    "obra": "O Príncipe, cap. XVII",
+    "confianca": "media",
+    "legenda": "Maquiavel não elogia a crueldade: analisa o poder como ele é, não como gostaríamos que fosse.\n\nO contexto da frase importa tanto quanto ela."
+  },
+  {
+    "texto": "O obstáculo ao ato faz avançar o ato. O que está no caminho *torna-se o caminho.*",
+    "autor": "Marco Aurélio",
+    "obra": "Meditações, V.20",
+    "confianca": "alta",
+    "legenda": "O que bloqueia pode virar o próprio treino.\n\nPara Marco Aurélio, o obstáculo não está entre você e o objetivo: ele é o trabalho."
+  },
+  {
+    "texto": "Não é que tenhamos pouco tempo, mas *perdemos muito.*",
+    "autor": "Sêneca",
+    "obra": "Sobre a Brevidade da Vida, 1",
+    "confianca": "alta",
+    "legenda": "A vida é longa o bastante se bem usada.\n\nSêneca cobra de quem reclama de tempo: onde ele foi parar?"
+  },
+  {
+    "texto": "Não são as coisas que perturbam os homens, mas *os julgamentos que fazem sobre elas.*",
+    "autor": "Epicteto",
+    "obra": "Enchirídion, 5",
+    "confianca": "alta",
+    "legenda": "O fato é neutro. A interpretação dói.\n\nA liberdade que Epicteto propõe começa em trocar o julgamento."
+  },
+  {
+    "texto": "Quem tem um _porquê_ para viver suporta quase qualquer *como.*",
+    "autor": "Friedrich Nietzsche",
+    "obra": "Crepúsculo dos Ídolos, Máximas e Flechas, 12",
+    "confianca": "alta",
+    "legenda": "Propósito vem antes de resistência.\n\nSem o porquê, qualquer dificuldade parece grande demais."
+  },
+  {
+    "texto": "O segredo da existência humana não está só em viver, mas em *saber para que se vive.*",
+    "autor": "Fiódor Dostoiévski",
+    "obra": "Os Irmãos Karamazov",
+    "confianca": "media",
+    "legenda": "Tradução e trecho variam entre edições. Confira na sua edição antes de postar.\n\nA pergunta de Dostoiévski continua a mesma: viver para quê?"
+  }
+]

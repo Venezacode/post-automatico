@@ -18,16 +18,17 @@ import yaml
 
 ROOT = Path(__file__).parent
 HIST = ROOT / "historico.json"
+FILA = ROOT / "fila.json"
 
-DEMO = [
-    ("papel", "Quem tem medo\nde investir em\nmarketing continuará pagando\no preço de não vender."),
-    ("branco_vermelho", "Toda empresa grande já foi\n*uma ideia que alguém achou ridícula.*"),
-    ("caixa_alta", "Seu cérebro acredita na história que você repete todos os dias. Então escolha uma história poderosa."),
-    ("escuro_leve", "Você nunca vai\n_se sentir pronto,_\nporque estar pronto\nnão é um sentimento,\n*é uma decisão.*"),
-    ("semibold_cinza", "O sucesso na vida também é medido pela quantidade de conversas difíceis que você está disposto a ter."),
-    ("regra", "REGRA DE MARKETING:\n\nConteúdo atrai.\nRepetição faz lembrar.\nBastidor aproxima.\nOpinião posiciona.\nHistória conecta.\nPostar todo dia vende."),
-    ("tweet_claro", "Porrada de marketing:\n\nSeu produto pode ser o melhor do mercado.\n\nSe a comunicação for genérica, ele vai competir como se fosse igual a todos os outros."),
-    ("tweet_escuro", "Oportunidades não surgem do nada. É *você quem as cria.*"),
+DEMO = [  # (estilo, texto, autor) — citações clássicas de autoria estabelecida; revise a tradução antes de postar
+    ("papel", "Não é que tenhamos pouco tempo,\nmas que *perdemos muito.*", "Sêneca"),
+    ("branco_vermelho", "O que está no caminho\n*torna-se o caminho.*", "Marco Aurélio"),
+    ("caixa_alta", "Conheça o inimigo e conheça a si mesmo; em cem batalhas você *jamais correrá perigo.*", "Sun Tzu"),
+    ("escuro_leve", "Quem tem um _porquê_ para viver\nsuporta quase qualquer *como.*", "Friedrich Nietzsche"),
+    ("semibold_cinza", "Sofremos mais na imaginação do que na realidade.", "Sêneca"),
+    ("regra", "Dependem de nós:\n\nOpinião.\nImpulso.\nDesejo.\nAversão.", "Epicteto"),
+    ("tweet_claro", "Não são as coisas que perturbam os homens, mas *os julgamentos que fazem sobre elas.*", "Epicteto"),
+    ("tweet_escuro", "O segredo da existência humana não está só em viver, mas em *saber para que se vive.*", "Fiódor Dostoiévski"),
 ]
 
 
@@ -41,6 +42,19 @@ def carregar_hist() -> list:
 
 def salvar_hist(h: list) -> None:
     HIST.write_text(json.dumps(h, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def tirar_da_fila(cfg: dict, n: int, hist: list) -> list:
+    """Frases escritas pelo Claude (fila.json), sem repetir o que já está no histórico. Remove da fila as usadas."""
+    if not FILA.exists():
+        return []
+    fila = json.loads(FILA.read_text(encoding="utf-8"))
+    usados = {h["texto"] for h in hist}
+    fila = [f for f in fila if f["texto"] not in usados]
+    pegos, resto = fila[:n], fila[n:]
+    tags = " ".join("#" + h.lstrip("#") for h in cfg["conteudo"].get("hashtags", []))
+    FILA.write_text(json.dumps(resto, ensure_ascii=False, indent=2), encoding="utf-8")
+    return [{**f, "legenda": f"{f['legenda']}\n\n{cfg['conteudo']['cta_legenda']}\n\n{tags}".strip()} for f in pegos]
 
 
 def proximo_estilo(cfg: dict, n_existentes: int, texto: str = "") -> str:
@@ -57,8 +71,8 @@ def proximo_estilo(cfg: dict, n_existentes: int, texto: str = "") -> str:
 
 def cmd_demo(cfg):
     from render import renderizar
-    for i, (estilo, texto) in enumerate(DEMO, 1):
-        print("→", renderizar(texto, estilo, cfg, str(ROOT / "preview" / f"demo-{i}-{estilo}.png")))
+    for i, (estilo, texto, autor) in enumerate(DEMO, 1):
+        print("→", renderizar(texto, estilo, cfg, str(ROOT / "preview" / f"demo-{i}-{estilo}.png"), autor))
 
 
 def cmd_preview(cfg, n):
@@ -67,8 +81,8 @@ def cmd_preview(cfg, n):
     hist = carregar_hist()
     for i, p in enumerate(gerar(cfg, n, [h["texto"] for h in hist]), 1):
         estilo = proximo_estilo(cfg, len(hist) + i - 1, p["texto"])
-        arq = renderizar(p["texto"], estilo, cfg, str(ROOT / "preview" / f"preview-{i}-{estilo}.png"))
-        print(f"→ {arq}\n{p['texto']}\n---\n{p['legenda']}\n")
+        arq = renderizar(p["texto"], estilo, cfg, str(ROOT / "preview" / f"preview-{i}-{estilo}.png"), p["autor"])
+        print(f"→ {arq}\n{p['texto']}\n— {p['autor']} ({p['obra'] or 'sem obra'}; confiança: {p['confianca']})\n---\n{p['legenda']}\n")
 
 
 def cmd_criar(cfg, n):
@@ -78,8 +92,9 @@ def cmd_criar(cfg, n):
     for p in gerar(cfg, n, [h["texto"] for h in hist]):
         estilo = proximo_estilo(cfg, len(hist), p["texto"])
         nome = f"{datetime.now():%Y-%m-%d-%H%M%S}-{len(hist)+1}.png"
-        renderizar(p["texto"], estilo, cfg, str(ROOT / "posts" / nome))
-        hist.append({"texto": p["texto"], "legenda": p["legenda"], "estilo": estilo,
+        renderizar(p["texto"], estilo, cfg, str(ROOT / "posts" / nome), p["autor"])
+        hist.append({"texto": p["texto"], "autor": p["autor"], "obra": p["obra"], "confianca": p["confianca"],
+                     "legenda": p["legenda"], "estilo": estilo,
                      "arquivo": f"posts/{nome}", "status": "pendente", "criado": datetime.now().isoformat()})
         print("criado:", nome)
     salvar_hist(hist)
@@ -109,10 +124,15 @@ def cmd_lote(cfg, n):
     from render import renderizar
     hist = carregar_hist()
     if os.environ.get("PA_DEMO"):  # teste sem IA
-        posts = [{"texto": t, "legenda": f"Legenda de teste {i}\n\n#marketing"} for i, (_, t) in enumerate(DEMO[:n], 1)]
+        posts = [{"texto": t, "autor": a, "obra": "", "confianca": "alta", "legenda": f"Legenda de teste {i}\n\n#filosofia"} for i, (_, t, a) in enumerate(DEMO[:n], 1)]
     else:
-        from writer import gerar
-        posts = gerar(cfg, n, [h["texto"] for h in hist])
+        posts = tirar_da_fila(cfg, n, hist)
+        if len(posts) < n:  # fila acabou: completa com IA (se houver chave), senão avisa
+            try:
+                from writer import gerar
+                posts += gerar(cfg, n - len(posts), [h["texto"] for h in hist])
+            except Exception as e:
+                print(f"Fila vazia e IA indisponível ({str(e)[:120]}). Peça um novo lote de frases ao Claude.")
     base = os.environ.get("IMAGE_BASE_URL", cfg.get("repositorio_url_raw", "")).rstrip("/")
     ultimo = None
     pend = [datetime.fromisoformat(h["agendado"]) for h in hist if h.get("agendado")]
@@ -123,8 +143,9 @@ def cmd_lote(cfg, n):
     for p, quando in zip(posts, horarios):
         estilo = proximo_estilo(cfg, len(hist), p["texto"])
         nome = f"{quando:%Y-%m-%d}-{len(hist)+1}.png"
-        renderizar(p["texto"], estilo, cfg, str(ROOT / "posts" / nome))
-        hist.append({"texto": p["texto"], "legenda": p["legenda"], "estilo": estilo, "arquivo": f"posts/{nome}",
+        renderizar(p["texto"], estilo, cfg, str(ROOT / "posts" / nome), p["autor"])
+        hist.append({"texto": p["texto"], "autor": p["autor"], "obra": p["obra"], "confianca": p["confianca"],
+                     "legenda": p["legenda"], "estilo": estilo, "arquivo": f"posts/{nome}",
                      "status": "agendado-externo", "agendado": quando.isoformat(), "criado": datetime.now().isoformat()})
         linhas.append([p["legenda"], f"{base}/posts/{nome}", "", f"{quando:%Y-%m-%d %H:%M}"])
         print(f"{quando:%a %d/%m %H:%M}  {nome}")

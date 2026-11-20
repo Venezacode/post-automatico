@@ -32,7 +32,7 @@ ESTILOS = {
                             tr=-0.042, ml=0.07, mr=0.07, ass="handle_abaixo", dest="vermelho", teto=0.62),
     # sucessoo.on: fundo preto, CAIXA ALTA pesada, aspas vermelhas
     "caixa_alta": dict(bg="#050505", cor="#FFFFFF", sec="#A0A0A5", fam="mont", peso=800, tam=88, lh=1.0,
-                       tr=-0.022, ml=0.10, mr=0.17, ass="handle_abaixo", dest="nenhum", upper=True, aspas=True, teto=0.52),
+                       tr=-0.022, ml=0.10, mr=0.10, ass="handle_abaixo", dest="nenhum", upper=True, aspas=True, teto=0.52),
     # Pedro Sobral: escuro granulado, texto leve, trechos em negrito itálico sublinhado / vermelho
     "escuro_leve": dict(bg="#0C0C0D", cor="#F4F4F4", sec="#8A8A8E", fam="mont", peso=300, tam=104, lh=1.08,
                         tr=-0.055, ml=0.10, mr=0.08, grain=0.07, ass="handle_abaixo", dest="leve", teto=0.62),
@@ -209,24 +209,9 @@ def estilo_valido(estilo: str, texto: str) -> str:
     return estilo
 
 
-def _com_aspas(texto: str) -> str:
-    """Coloca “ ” em volta da citação, por fora das marcações * e _ ."""
-    t = texto.strip()
-    i = 0
-    while i < len(t) and t[i] in "*_":
-        i += 1
-    j = len(t)
-    while j > i and t[j - 1] in "*_":
-        j -= 1
-    return t[:i] + "\u201c" + t[i:j] + "\u201d" + t[j:]
-
-
-def renderizar(texto: str, estilo: str, cfg: dict, saida: str, autor: str = "") -> str:
-    """autor: se informado, mostra a citação entre aspas e '— Autor' abaixo."""
+def renderizar(texto: str, estilo: str, cfg: dict, saida: str) -> str:
     estilo = estilo_valido(estilo, texto)
     est = ESTILOS[estilo]
-    if autor and not est.get("aspas") and estilo != "regra":
-        texto = _com_aspas(texto)
     W, H = cfg["visual"]["largura"], cfg["visual"]["altura"]
     perfil = cfg["perfil"]
     S = 2
@@ -255,13 +240,7 @@ def renderizar(texto: str, estilo: str, cfg: dict, saida: str, autor: str = "") 
     # bloco = [cabeçalho] + texto + [assinatura]
     handle_gap = 64 * S
     handle_h = 34 * S
-    attr_gap = 52 * S
-    attr_tam = 42 * S
-    if autor:  # reduz se o nome for largo demais
-        while fonte("mont", 600, attr_tam).getlength("— " + autor) > larg_max and attr_tam > 24 * S:
-            attr_tam -= 2 * S
-    attr_h = (attr_gap + attr_tam * 1.2) if autor else 0
-    bloco = cab_h + altura + attr_h
+    bloco = cab_h + altura
     if est["ass"] == "handle_abaixo":
         bloco += handle_gap + handle_h
     aspas_h = 190 * S if est.get("aspas") else 0
@@ -313,13 +292,7 @@ def renderizar(texto: str, estilo: str, cfg: dict, saida: str, autor: str = "") 
     if est.get("aspas"):
         fa = fonte("mont", 900, 230 * S)
         wq = fa.getlength("”")
-        d.text((W * S - int(0.035 * W * S) - wq, base_texto - 150 * S), "”", font=fa, fill=cfg["visual"]["cor_destaque"])
-
-    # autor da citação
-    if autor:
-        d.text((ml, base_texto + attr_gap), "— " + autor, font=fonte("mont", 600, attr_tam),
-               fill=est["sec"] if estilo not in ("tweet_claro", "papel", "branco_vermelho", "regra") else est["cor"])
-        base_texto += attr_h
+        d.text((W * S - mr - wq + 6 * S, base_texto - 150 * S), "”", font=fa, fill=cfg["visual"]["cor_destaque"])
 
     # assinatura
     if est["ass"] == "handle_abaixo":

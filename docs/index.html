@@ -35,12 +35,11 @@
   .toast.on{opacity:1}
   .empty{padding:40px 16px;text-align:center;color:var(--muted)}
   .past .card{opacity:.6}
-  .fonte{font-size:13px;color:#8a6d00;margin:6px 0}
 </style>
 </head>
 <body>
 <header>
-  <h1>Ventura · Painel de Posts</h1>
+  <h1>Painel de Posts</h1>
   <p>Copie a legenda, baixe a imagem e agende no Buffer. Atualiza sozinho a cada novo lote.</p>
 </header>
 <main id="lista"><div class="empty">Carregando…</div></main>
@@ -98,18 +97,13 @@ function card(p){
   const tag = document.createElement("span"); tag.className = "tag" + (p.status==="publicado"?" ok":"");
   tag.textContent = p.status==="publicado" ? "publicado" : "para agendar";
   w.appendChild(tag);
-  const fonte = document.createElement("div"); fonte.className = "fonte";
-  if(p.autor){
-    fonte.textContent = "— " + p.autor + (p.obra ? " · " + p.obra : "") + (p.confianca ? " · confiança " + p.confianca : "");
-    if(p.confianca && p.confianca !== "alta") fonte.textContent += " ⚠ confira a fonte antes de postar";
-  }
   const cap = document.createElement("pre"); cap.className = "cap"; cap.textContent = p.legenda;
   const ac = document.createElement("div"); ac.className = "actions";
   const b1 = document.createElement("button"); b1.className="primary"; b1.textContent="Copiar legenda"; b1.onclick=()=>copiar(p.legenda);
   const b2 = document.createElement("button"); b2.textContent="Baixar imagem"; b2.onclick=()=>baixar(url,nome);
   ac.append(b1,b2);
   if(navigator.canShare){ const b3=document.createElement("button"); b3.textContent="Compartilhar"; b3.onclick=()=>compartilhar(url,nome,p.legenda); ac.append(b3); }
-  body.append(w,fonte,cap,ac); c.append(img,body); return c;
+  body.append(w,cap,ac); c.append(img,body); return c;
 }
 
 function secao(titulo, itens, classe){

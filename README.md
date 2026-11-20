@@ -1,8 +1,6 @@
-# Ventura Post Estático — cards de texto para Instagram
+# Post Automático — cards de texto para Instagram
 
-Gera posts tipográficos (estilo das suas referências) com citações de filosofia, estoicismo e estratégia, sempre com o autor no card, escolhidas pela IA (confira a fonte antes de postar) e publica sozinho **3x por semana** (seg, qua, sex às 09h de Brasília).
-
-> **Primeira vez?** Siga o [SETUP.md](SETUP.md): pegar a chave do Google AI Studio e ligar a automação com `./setup.sh`.
+Gera posts tipográficos (estilo das suas referências) com frases escritas pela Claude e publica sozinho **3x por semana** (seg, qua, sex às 09h de Brasília).
 
 ## 1. Teste local (2 minutos)
 
